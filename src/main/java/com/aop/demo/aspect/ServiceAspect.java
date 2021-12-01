@@ -8,7 +8,6 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -26,18 +25,18 @@ public class ServiceAspect {
 	@Pointcut("execution(* *.handleTextWithAdvice(..))")
 	private void getPointcut() {
 	}
-	
+
 	@Around("getPointcut()")
 	public void giveAroundAdvice(ProceedingJoinPoint proceedingJoinPoint) {
 		String key = getKey(proceedingJoinPoint);
-		addStr(key, "Around Beginning - ");
+		addStr(key, "Beginning of Around - ");
 		try {
 			proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 
-		addStr(key, "Around Ending");
+		addStr(key, "Ending of Around");
 	}
 
 	@Before("getPointcut()")
@@ -52,16 +51,16 @@ public class ServiceAspect {
 		addStr(key, "After - ");
 	}
 
-	@AfterReturning(pointcut = "execution(* com.aop.demo.service.AopService.handleTextWithAdvice(..))")
-	public void giveAfterReturningAdvice(JoinPoint jp) throws RuntimeException {
+	@AfterReturning("execution(public void com.aop.demo.service.AopService.handleTextWithAdvice(String))")
+	public void giveAfterReturningAdvice(JoinPoint jp) {
 		String key = getKey(jp);
 		addStr(key, "After Returning - ");
 	}
 
-	@AfterThrowing(pointcut = "execution(* com.aop.demo.service.AopService.handleTextWithAdvice(..))")
-	public void giveAfterThrowingAdvice(JoinPoint jp) {
+	@AfterReturning(pointcut = "execution(public * com.aop.demo.service.AopService.handleTextWithAdvice(..))", returning = "retVal")
+	public void giveAfterReturningAdviceWithException(JoinPoint jp, Object retVal) {
 		String key = getKey(jp);
-		addStr(key, "After Throw - ");
+		addStr(key, "After Returning with Return Value:" + retVal + " - ");
 	}
 
 	private String getKey(JoinPoint jp) {

@@ -19,7 +19,7 @@ public class AopService {
 		return getStr(key);
 	}
 
-	public void handleTextWithAdvice(String key){
+	public void handleTextWithAdvice(String key) {
 		addStr(key, "Service Str - ");
 	}
 
